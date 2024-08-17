@@ -29,11 +29,7 @@ AboutDlg::AboutDlg(QWidget *parent) : QDialog(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     ui_.setupUi(this);
-#ifdef PSI_PLUS
-    setWindowIcon(IconsetFactory::icon("psi/psiplus_logo").icon());
-#else
     setWindowIcon(IconsetFactory::icon("psi/logo_32").icon());
-#endif
 
     setModal(false);
 

@@ -140,15 +140,11 @@ QString ApplicationInfo::resourcesDir()
     return qApp->applicationDirPath();
 #elif defined(Q_OS_MAC)
     // FIXME: Clean this up (remko)
-    // System routine locates resource files. We "know" that Psi.icns is
-    // in the Resources directory.
+    // System routine locates resource files.
+    // We "know" that Psi.icns is in the Resources directory.
     QString     resourcePath;
     CFBundleRef mainBundle = CFBundleGetMainBundle();
-#ifdef PSI_PLUS
-    const char *appIconName = "application-plus.icns";
-#else
     const char *appIconName = "application.icns";
-#endif
     CFStringRef resourceCFStringRef = CFStringCreateWithCString(nullptr, appIconName, kCFStringEncodingASCII);
     CFURLRef    resourceURLRef      = CFBundleCopyResourceURL(mainBundle, resourceCFStringRef, nullptr, nullptr);
     if (resourceURLRef) {
