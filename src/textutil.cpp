@@ -190,36 +190,8 @@ QString TextUtil::rich2plain(const QString &in, bool collapseSpaces)
 
 QString TextUtil::resolveEntities(const QStringView &in)
 {
-    QString out;
-
-    for (int i = 0; i < int(in.length()); ++i) {
-        if (in[i] == '&') {
-            // find a semicolon
-            ++i;
-            int n = in.indexOf(';', i);
-            if (n == -1)
-                break;
-            auto type = in.mid(i, (n - i));
-
-            i = n; // should be n+1, but we'll let the loop increment do it
-
-            if (type == QLatin1String { "amp" })
-                out += '&';
-            else if (type == QLatin1String { "lt" })
-                out += '<';
-            else if (type == QLatin1String { "gt" })
-                out += '>';
-            else if (type == QLatin1String { "quot" })
-                out += '\"';
-            else if (type == QLatin1String { "apos" })
-                out += '\'';
-            else if (type == QLatin1String { "nbsp" })
-                out += char(0xa0);
-        } else {
-            out += in[i];
-        }
-    }
-
+    QString out = in.toString();
+    unescape(out);
     return out;
 }
 
