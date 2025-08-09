@@ -1574,7 +1574,6 @@ void GCMainDlg::doShowInfo()
     Ui::MucInfo ui;
     ui.setupUi(dlg);
     dlg->setWindowTitle(getDisplayName());
-    dlg->setWindowIcon(IconsetFactory::icon("psi/info").icon());
     ui.lblAccount->setAccount(account());
     ui.lblMucJid->setText(QString("<a href=\"xmpp:%1?join\">%1</a>").arg(jid().bare()));
     ui.lblDiscoName->setText(d->discoMucName);
