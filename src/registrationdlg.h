@@ -20,6 +20,8 @@
 #ifndef REGISTRATIONDLG_H
 #define REGISTRATIONDLG_H
 
+#include "ui_registration.h"
+
 #include <QDialog>
 
 class JT_XRegister;
@@ -50,6 +52,7 @@ private slots:
 private:
     class Private;
     Private *d;
+    Ui::RegistrationDialog m_ui;
 
     void setData(JT_XRegister *jt);
     void updateData(JT_XRegister *jt);

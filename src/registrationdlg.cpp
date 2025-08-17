@@ -120,13 +120,8 @@ public:
     Jid         jid;
     PsiAccount *pa = nullptr;
 
-    QPushButton           *pb_close = nullptr, *pb_reg = nullptr;
     QPointer<JT_XRegister> jt;
     int                    type           = 0;
-    BusyWidget            *busy           = nullptr;
-    QLabel                *lb_top         = nullptr;
-    QWidget               *gr_form        = nullptr;
-    QGridLayout           *gr_form_layout = nullptr;
     Form                   form;
 
     QList<QLabel *>    lb_field;
@@ -145,42 +140,14 @@ RegistrationDlg::RegistrationDlg(const Jid &jid, PsiAccount *pa) : QDialog(nullp
     d->xdata = nullptr;
 
     setWindowTitle(tr("Registration: %1").arg(d->jid.full()));
+    m_ui.setupUi(this);
 
-    QVBoxLayout *vb1 = new QVBoxLayout(this);
-    vb1->setContentsMargins(4, 4, 4, 4);
-    d->lb_top = new QLabel(this);
-    d->lb_top->setWordWrap(true);
-    d->lb_top->setFrameShadow(QFrame::Sunken);
-    d->lb_top->setFrameShape(QFrame::Panel);
-    d->lb_top->hide();
-    vb1->addWidget(d->lb_top);
 
-    d->gr_form        = new QWidget(this);
-    d->gr_form_layout = new QGridLayout(d->gr_form);
-    d->gr_form_layout->setSpacing(4);
-    vb1->addWidget(d->gr_form);
-    d->gr_form->hide();
 
-    QFrame *line = new QFrame(this);
-    line->setFixedHeight(2);
-    line->setFrameShadow(QFrame::Sunken);
-    line->setFrameShape(QFrame::HLine);
-    vb1->addWidget(line);
 
-    QHBoxLayout *hb1 = new QHBoxLayout;
-    vb1->addLayout(hb1);
-    d->busy = new BusyWidget(this);
-    hb1->addWidget(d->busy);
-    hb1->addStretch(1);
-    d->pb_reg = new QPushButton(tr("&Register"), this);
-    d->pb_reg->setDefault(true);
-    connect(d->pb_reg, SIGNAL(clicked()), SLOT(doRegSet()));
-    hb1->addWidget(d->pb_reg);
-    d->pb_close = new QPushButton(tr("&Close"), this);
-    connect(d->pb_close, SIGNAL(clicked()), SLOT(close()));
-    hb1->addWidget(d->pb_close);
 
-    d->pb_reg->hide();
+    m_ui.gr_form->hide();
+    m_ui.pb_reg->hide();
 
     doRegGet();
 }
@@ -200,7 +167,7 @@ RegistrationDlg::~RegistrationDlg()
 
 void RegistrationDlg::done(int r)
 {
-    if (d->busy->isActive() && d->type == 1) {
+    if (m_ui.busy->isActive() && d->type == 1) {
         int n = QMessageBox::information(
             this, tr("Busy"),
             tr("<qt>Registration has already been submitted, so closing this window will not prevent the registration "
@@ -214,9 +181,9 @@ void RegistrationDlg::done(int r)
 
 void RegistrationDlg::doRegGet()
 {
-    d->lb_top->setText(tr("Fetching registration form for %1 ...").arg(d->jid.full()));
-    d->lb_top->show();
-    d->busy->start();
+    m_ui.lb_top->setText(tr("Fetching registration form for %1 ...").arg(d->jid.full()));
+    m_ui.lb_top->show();
+    m_ui.busy->start();
 
     d->type = 0;
     d->jt   = new JT_XRegister(d->pa->client()->rootTask());
@@ -250,9 +217,9 @@ void RegistrationDlg::doRegSet()
         d->jt->setXForm(d->form, form);
     }
 
-    d->gr_form->setEnabled(false);
-    d->pb_reg->setEnabled(false);
-    d->busy->start();
+    m_ui.gr_form->setEnabled(false);
+    m_ui.pb_reg->setEnabled(false);
+    m_ui.busy->start();
 
     d->type = 1;
     connect(d->jt, SIGNAL(finished()), SLOT(jt_finished()));
@@ -263,7 +230,7 @@ void RegistrationDlg::setInstructions(const QString &jid, const QString &instruc
 {
     QString str = tr("<b>Registration for \"%1\":</b><br><br>").arg(jid);
     str += TextUtil::plain2rich(instructions);
-    d->lb_top->setText(str);
+    m_ui.lb_top->setText(str);
 }
 
 /**
@@ -279,8 +246,8 @@ void RegistrationDlg::processXData(const XData &form)
     if (d->xdata)
         delete d->xdata;
 
-    d->xdata = new XDataWidget(d->pa->psi(), d->gr_form, d->pa->client(), d->jid);
-    d->gr_form_layout->addWidget(d->xdata); // FIXME
+    d->xdata = new XDataWidget(d->pa->psi(), m_ui.gr_form, d->pa->client(), d->jid);
+    m_ui.gr_form_layout->addWidget(d->xdata); // FIXME
     d->xdata->setForm(form, false);
 
     d->xdata->show();
@@ -294,10 +261,10 @@ void RegistrationDlg::processLegacyForm(const XMPP::Form &form)
     setInstructions(d->jid.full(), form.instructions());
 
     for (const auto &f : std::as_const(d->form)) {
-        QLabel    *lb = new QLabel(f.fieldName(), d->gr_form);
-        QLineEdit *le = new QLineEdit(d->gr_form);
-        d->gr_form_layout->addWidget(lb); // FIXME
-        d->gr_form_layout->addWidget(le); // FIXME
+        QLabel    *lb = new QLabel(f.fieldName(), m_ui.gr_form);
+        QLineEdit *le = new QLineEdit(m_ui.gr_form);
+        m_ui.gr_form_layout->addWidget(lb); // FIXME
+        m_ui.gr_form_layout->addWidget(le); // FIXME
         if (f.isSecret())
             le->setEchoMode(QLineEdit::Password);
         le->setText(f.value());
@@ -334,9 +301,9 @@ void RegistrationDlg::updateData(JT_XRegister *jt)
 
 void RegistrationDlg::jt_finished()
 {
-    d->busy->stop();
-    d->gr_form->setEnabled(true);
-    d->pb_reg->setEnabled(true);
+    m_ui.busy->stop();
+    m_ui.gr_form->setEnabled(true);
+    m_ui.pb_reg->setEnabled(true);
     JT_XRegister *jt = d->jt;
     d->jt            = nullptr;
 
@@ -344,8 +311,8 @@ void RegistrationDlg::jt_finished()
         if (d->type == 0) {
             setData(jt);
 
-            d->gr_form->show();
-            d->pb_reg->show();
+            m_ui.gr_form->show();
+            m_ui.pb_reg->show();
             show();
 
             qApp->processEvents();

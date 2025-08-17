@@ -60,6 +60,7 @@ list(APPEND FORMS
     profilenew.ui
     profileopen.ui
     proxy.ui
+    registration.ui
     rosteravatarframe.ui
     search.ui
     sendbuttontemplateseditor.ui
