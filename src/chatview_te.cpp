@@ -556,14 +556,8 @@ void ChatView::renderMucMessage(const MessageView &mv, QTextCursor &insertCursor
         }
     } else {
         QString    header;
-        const bool saysStyle = PsiOptions::instance()->getOption("options.ui.chat.use-chat-says-style").toBool();
-        if (saysStyle) {
-            header = icon + QString("<font color=\"%1\">").arg(nickcolor) + QString("[%1] ").arg(timestr)
-                + QString("%1 says:").arg(nick) + "</font>";
-        } else {
-            header = icon + QString("<font color=\"%1\">").arg(nickcolor) + QString("[%1] &lt;").arg(timestr) + nick
-                + "&gt;</font>";
-        }
+        header = icon + QString("<font color=\"%1\">").arg(nickcolor) + QString("[%1] &lt;").arg(timestr) + nick
+            + "&gt;</font>";
         inserted = insertTextWithRange(header, insertCursor);
         if (mv.isSpooled() && !PsiOptions::instance()->getOption("options.ui.muc.colored-history").toBool())
             markOptionColor(inserted, informationalColorOpt);
@@ -573,10 +567,7 @@ void ChatView::renderMucMessage(const MessageView &mv, QTextCursor &insertCursor
         }
 
         QTextCursor bodyCursor = cursorAfter(inserted);
-        if (saysStyle)
-            bodyCursor.insertBlock();
-        else
-            bodyCursor.insertText(" ");
+        bodyCursor.insertText(" ");
         auto body = insertTextFragmentWithRange(QString("<font color=\"%1\">").arg(textcolor) + inner + "</font>",
                                                 bodyCursor);
         if (mv.isAlert())
@@ -631,24 +622,15 @@ void ChatView::renderMessage(const MessageView &mv, QTextCursor &insertCursor)
                                      : "options.ui.look.colors.messages.received");
     } else {
         QString    prefix;
-        const bool saysStyle = PsiOptions::instance()->getOption("options.ui.chat.use-chat-says-style").toBool();
-        if (saysStyle) {
-            prefix = icon + QString("<span style=\"color: %1\">").arg(color) + QString("[%1] ").arg(timestr)
-                + tr("%1 says:").arg(TextUtil::escape(mv.nick())) + "</span>";
-        } else {
-            prefix = icon + QString("<span style=\"color: %1\">").arg(color) + QString("[%1] &lt;").arg(timestr)
+        prefix = icon + QString("<span style=\"color: %1\">").arg(color) + QString("[%1] &lt;").arg(timestr)
                 + TextUtil::escape(mv.nick()) + QString("&gt;</span>");
-        }
         auto prefixRange = insertTextWithRange(prefix, insertCursor);
         markOptionColor(prefixRange,
                         mv.isLocal() ? "options.ui.look.colors.messages.sent"
                                      : "options.ui.look.colors.messages.received");
 
         QTextCursor bodyCursor = cursorAfter(prefixRange);
-        if (saysStyle)
-            bodyCursor.insertBlock();
-        else
-            bodyCursor.insertText(" ");
+        bodyCursor.insertText(" ");
         if (mv.isSpooled()) {
             auto bodyRange = insertTextFragmentWithRange(
                 QString("<span style=\"color: %1\">%2</span>")

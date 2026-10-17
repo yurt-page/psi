@@ -277,7 +277,6 @@
     <use-small-chats type="bool">false</use-small-chats>
     <opacity type="int" comment="Opacity percentage of chat dialogs">100</opacity>
     <legacy-formatting type="bool" comment="This enables legacy usenet-style formatting (// ** __)">true</legacy-formatting>
-    <use-chat-says-style type="bool">false</use-chat-says-style>
     <size type="QSize" comment="Remembered window size">
      <width>0</width>
      <height>0</height>
